@@ -54,8 +54,8 @@ def ims(name, img, cmin=0, cmax=1):
     if not os.path.exists(os.path.dirname(name)):
         os.mkdir(os.path.dirname(name))
     # scipy.misc.toimage(img, cmin=cmin, cmax=cmax).save(name)
-    Image.fromarray(img).convert('L').save(name)
+    Image.fromarray(np.uint8(img)).convert('L').save(name)
 
 def get_available_gpus():
     local_device_protos = device_lib.list_local_devices()
-    return [x.name for x in local_device_protos if x.device_type == 'CPU']
+    return [x.name for x in local_device_protos if x.device_type == 'GPU']

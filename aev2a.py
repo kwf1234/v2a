@@ -598,7 +598,7 @@ class Draw:
         base = self.get_batch(data.root.train_img, np.arange(0, self.batch_size))
         data_len = data.root.train_img.shape[0]
 
-        # ims(os.path.join(os.getcwd(), 'results', self.model_name, 'base.png'), merge_color(base, [8, self.batch_size // 8]))
+        ims(os.path.join(os.getcwd(), 'results', self.model_name, 'base.png'), merge_color(base, [8, self.batch_size // 8]))
 
         saver = tf.train.Saver(max_to_keep=2)
         if restore and os.path.exists(os.path.join(os.getcwd(), 'training', self.model_name)):
