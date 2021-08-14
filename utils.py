@@ -3,8 +3,8 @@ import scipy.misc
 import numpy as np
 from skimage import img_as_float
 from tensorflow.python.client import device_lib
-import tensorflow as tf
-
+import tensorflow.compat.v1 as tf
+from PIL import Image
 
 def dense(x, input_features, output_features, scope=None, with_w=False):
     with tf.variable_scope(scope or "Linear"):
@@ -53,9 +53,9 @@ def ims(name, img, cmin=0, cmax=1):
     # print(img[:10][:10])
     if not os.path.exists(os.path.dirname(name)):
         os.mkdir(os.path.dirname(name))
-    scipy.misc.toimage(img, cmin=cmin, cmax=cmax).save(name)
-
+    # scipy.misc.toimage(img, cmin=cmin, cmax=cmax).save(name)
+    Image.fromarray(img).convert('L').save(name)
 
 def get_available_gpus():
     local_device_protos = device_lib.list_local_devices()
-    return [x.name for x in local_device_protos if x.device_type == 'GPU']
+    return [x.name for x in local_device_protos if x.device_type == 'CPU']

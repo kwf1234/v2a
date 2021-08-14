@@ -6,7 +6,7 @@ from PIL import Image, ImageOps
 import cv2
 from scipy.stats.stats import pearsonr
 from sklearn.metrics import mutual_info_score
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from tensorflow.contrib.tensorboard.plugins import projector
 from numpy import pi
 

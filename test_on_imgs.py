@@ -1,3 +1,4 @@
+import tensorflow.compat.v1 as tf
 from aev2a import *
 from config import *
 import audio_gen
@@ -18,6 +19,7 @@ import simpleaudio as saudio
 # usage: python test_on_imgs.py cfg_name test|train rand|seq model_name_postfix
 
 if __name__ == '__main__':
+    tf.compat.v1.disable_v2_behavior()
 
     config_id = sys.argv[1] if len(sys.argv) > 1 else 'default'  # have to be defined in configs.json
     dataset = sys.argv[2] if len(sys.argv) > 2 else 'data/simple_hand.hdf5'  # path to dataset, default can be downloaded
@@ -27,7 +29,7 @@ if __name__ == '__main__':
 
     network_params = load_config(config_id)
     network_params['batch_size'] = 1
-    model_name = find_model(config_id, model_name_postfix)
+    model_name = find_model(config_id, '')
     sound_len = audio_gen.soundscape_len(network_params['audio_gen'], network_params['fs'])
     model_root = 'training/'
 

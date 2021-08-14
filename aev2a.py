@@ -1,5 +1,4 @@
-import tensorflow as tf
-import numpy as np
+import tensorflow.compat.v1 as tf
 from utils import *
 import os, sys
 import time
@@ -10,7 +9,7 @@ import tf_carfac
 import tcn
 import scipy.io.wavfile as wavfile
 from pprint import pprint
-
+tf.compat.v1.disable_eager_execution()
 
 class Draw:
 
@@ -86,23 +85,23 @@ class Draw:
         # encoder/decoder RNN cells
         if network_params['residual_encoder']:  # encoder does not necessarily have to be residual
             self.enc_cells = [
-                tf.contrib.rnn.ResidualWrapper(tf.contrib.rnn.LayerNormBasicLSTMCell(self.n_hidden, activation=tf.nn.tanh))
+                tf.nn.rnn_cell.ResidualWrapper(tf.nn.rnn_cell.LSTMCell(self.n_hidden, activation=tf.nn.tanh))
                 for _ in range(self.n_rnn_cells[0] - 1)]
             # non-residual layer needed at the front as the input-output dimension is not the same for the first enc and dec layers
-            self.enc_cells.insert(0, tf.contrib.rnn.LayerNormBasicLSTMCell(self.n_hidden, activation=tf.nn.tanh))
+            self.enc_cells.insert(0, tf.nn.rnn_cell.LSTMCell(self.n_hidden, activation=tf.nn.tanh))
         else:
-            self.enc_cells = [tf.contrib.rnn.LayerNormBasicLSTMCell(self.n_hidden, activation=tf.nn.tanh)
+            self.enc_cells = [tf.nn.rnn_cell.LSTMCell(self.n_hidden, activation=tf.nn.tanh)
                               for _ in range(self.n_rnn_cells[0])]
-        self.rnn_enc = tf.contrib.rnn.MultiRNNCell(self.enc_cells)  # encoder
+        self.rnn_enc = tf.nn.rnn_cell.MultiRNNCell(self.enc_cells)  # encoder
 
         # decoder part
         if not self.nonrecurrent_dec:
             self.dec_cells = [
-                tf.contrib.rnn.ResidualWrapper(tf.contrib.rnn.LayerNormBasicLSTMCell(self.n_hidden, activation=tf.nn.tanh))
+                tf.nn.rnn_cell.ResidualWrapper(tf.nn.rnn_cell.LSTMCell(self.n_hidden, activation=tf.nn.tanh))
                 for _ in range(self.n_rnn_cells[1] - 1)]
             # put a non-residual layer at the front as the input-output dimension is not the same for the first enc and dec layers
-            self.dec_cells.insert(0, tf.contrib.rnn.LayerNormBasicLSTMCell(self.n_hidden, activation=tf.nn.tanh))
-            self.rnn_dec = tf.contrib.rnn.MultiRNNCell(self.dec_cells)  # decoder
+            self.dec_cells.insert(0, tf.nn.rnn_cell.LSTMCell(self.n_hidden, activation=tf.nn.tanh))
+            self.rnn_dec = tf.nn.rnn_cell.MultiRNNCell(self.dec_cells)  # decoder
             dec_state = self.rnn_dec.zero_state(self.batch_size, self.dtype)
         else:  # non-recurrent decoder
             self.rnn_dec = []
@@ -599,7 +598,7 @@ class Draw:
         base = self.get_batch(data.root.train_img, np.arange(0, self.batch_size))
         data_len = data.root.train_img.shape[0]
 
-        ims(os.path.join(os.getcwd(), 'results', self.model_name, 'base.png'), merge_color(base, [8, self.batch_size // 8]))
+        # ims(os.path.join(os.getcwd(), 'results', self.model_name, 'base.png'), merge_color(base, [8, self.batch_size // 8]))
 
         saver = tf.train.Saver(max_to_keep=2)
         if restore and os.path.exists(os.path.join(os.getcwd(), 'training', self.model_name)):
@@ -797,7 +796,7 @@ if __name__ == '__main__':
         name = variable.name
         variable_parameters = 1
         for dim in shape:
-            variable_parameters *= dim.value
+            variable_parameters *= dim
         print(name, shape, variable_parameters)
         total_parameters += variable_parameters
     print('total_parameters', total_parameters, file=sys.stderr)
