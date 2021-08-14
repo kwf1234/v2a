@@ -11,7 +11,6 @@ configs/
 .idea/
 config.json
 configs/
-data/*.hdf5
 
 copy_results_to_local.sh
 triton_batch.sh
