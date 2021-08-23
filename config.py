@@ -86,7 +86,7 @@ def load_config(cfg_id):
 def find_model(cfg_id, model_name_postfix):
     with open('configs.json', 'rt') as f:
         configs = json.load(f)
-    return 'img=120x160x1,attention=20,hidden=1024,z=45,seq_len=26,n_rnn=3-3,v1=True,nv1write=3,cw=0.1,fs=44100,hearing=False,sslen=3x4*8*1.5,constphase=True,mfccs=100-0.01-0.002,wg=64-0.01-0.002' # select first occurrence
+    return [m for m in configs[cfg_id]['models'] if model_name_postfix in m][0] # select first occurrence
 
 
 def save_config(cfg_id, params, model_name):

@@ -79,12 +79,8 @@ if __name__ == '__main__':
             while img_same:
                 while play_obj and play_obj.is_playing():
                     time.sleep(0.000001)
-
                 #play_obj = saudio.play_buffer(soundscape, 2, 2, 44100)
 
-                fo = open("results/sound" + str(img_i), "ab")
-                fo.write(soundscape)
-                fo.close()
 
                 for i in range(model.sequence_length):
                     #cv2.imshow("Decoded", cs[i])
