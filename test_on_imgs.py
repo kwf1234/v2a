@@ -66,10 +66,10 @@ if __name__ == '__main__':
             # run model
             soundscape, gen_img, cs = model.run_single(batch[img_i], canvas_imgs_needed=True)
             soundscape = np.int16(soundscape / np.max(np.abs(soundscape)) * 32767)
-            cv2.imshow("Original", batch[img_i])
+            #cv2.imshow("Original", batch[img_i])
             if cv2.waitKey(1) == 27:
                 print('EXITED'); exit(0)
-            cv2.imshow("Generated", gen_img)
+            #cv2.imshow("Generated", gen_img)
             if cv2.waitKey(1) == 27:
                 print('EXITED'); exit(0)
 
@@ -80,10 +80,14 @@ if __name__ == '__main__':
                 while play_obj and play_obj.is_playing():
                     time.sleep(0.000001)
 
-                play_obj = saudio.play_buffer(soundscape, 2, 2, 44100)
+                #play_obj = saudio.play_buffer(soundscape, 2, 2, 44100)
+
+                fo = open("results/sound" + str(img_i), "ab")
+                fo.write(soundscape)
+                fo.close()
 
                 for i in range(model.sequence_length):
-                    cv2.imshow("Decoded", cs[i])
+                    #cv2.imshow("Decoded", cs[i])
                     c = cv2.waitKey(1)
                     if c == 27:
                         print('EXITED'); exit(0)

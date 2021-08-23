@@ -39,6 +39,8 @@ class Draw:
 
         # misc
         available_gpus = get_available_gpus()
+        print('availbale_gpus:',available_gpus)
+
         audio_params = network_params['audio_gen']
         hearing_params = network_params['hearing']
         hearing_models_used = hearing_params['models_used']
@@ -48,10 +50,11 @@ class Draw:
         # assign separate gpus to the hearing models, they tend to consume memory
         # leave the first gpu for everything else, spread the rest among the used hearing models
         hearing_gpus = [available_gpus[0] for _ in range(sum(hearing_models_used.values()))]  # default case of 1 gpu available
+        print('hearing_gpu:',hearing_gpus)
         if len(available_gpus) > 1:
             for hearing_i in range(len(hearing_gpus)):
                 hearing_gpus[hearing_i] = available_gpus[(hearing_i % (len(available_gpus) - 1)) + 1]
-
+        print('hearing_gpu:',hearing_gpus)
         # model name is crazy long but easy to search in tensorboard
         hearing_decoder_naming = ','.join([str(int(h)) for h in hearing_models_used.values()]) if self.hearing_decoder else self.hearing_decoder
         self.model_name_format = 'img={}x{}x{},attention={},hidden={},z={},seq_len={},n_rnn={}-{},v1={},nv1write={},cw={},fs={},hearing={},sslen={}x{}*{}*{},constphase={},mfccs={}-{}-{},wg={}-{}-{}' + model_name_postfix
@@ -178,11 +181,13 @@ class Draw:
                     gpu_i = 0
                     hearing_reprs = []
                     if hearing_models_used['mfccs']:
+                        print('mfccs:',gpu_i)
                         with tf.device(hearing_gpus[gpu_i]):
                             mfccs_hearing_repr = hearing.mfccs_hearing(soundscape, hearing_params, self.fs, self.share_parameters)
                         hearing_reprs.append(mfccs_hearing_repr)
                         gpu_i += 1
                     if hearing_models_used['wavegan']:
+                        print('wavegan:',gpu_i)
                         with tf.device(hearing_gpus[gpu_i]):
                             wg_hearing_repr = hearing.wavegan_hearing(soundscape, self.batch_size, hearing_params, self.fs, self.share_parameters)
                         hearing_reprs.append(wg_hearing_repr)
